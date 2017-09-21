@@ -11,25 +11,37 @@ class Dropdown extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleFirstPopupClick = this.handleFirstPopupClick.bind(this);
-    this.handleSecondPopupClick = this.handleSecondPopupClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.onClose = this.onClose.bind(this);
+    this.onRenderAll = this.onRenderAll.bind(this);
+
+    this.state = {
+      renderAll: false
+    }
   }
 
-  handleFirstPopupClick() {
+  onClose() {
+    this.props.popupActions.closeModal();
+
+    if (this.state.renderAll === true) {
+      this.props.popupActions.secondPopup();
+      this.setState({ renderAll: false })
+    }
+  }
+
+  onRenderAll() {
     this.props.popupActions.firstPopup();
-  }
-
-  handleSecondPopupClick() {
-    this.props.popupActions.secondPopup();
+    this.setState({ renderAll: true })
   }
 
   handleChange(value) {
     switch (value) {
       case 'first':
         this.props.popupActions.firstPopup();
+        break;
       case 'second':
         this.props.popupActions.secondPopup();
+        break;
       default:
         return value;
     }
@@ -54,20 +66,22 @@ class Dropdown extends React.Component {
           </Option>
         </Select>
 
-        <Button type="primary" ghost>Open all modals</Button>
+        <Button type="primary" onClick={this.onRenderAll} ghost>Open all modals</Button>
 
         {popup.popupWindow === 'first' &&
           <Modal
-            visible="true"
+            visible={popup.visible}
             title="Basic Modal"
+            onCancel={this.onClose}
           >
             <p>First Modal Window</p>
           </Modal>
           }
         {popup.popupWindow === 'second' &&
           <Modal
-            visible="true"
+            visible={popup.visible}
             title="Basic Modal"
+            onCancel={this.onClose}
           >
             <p>Second Modal Window</p>
           </Modal>
